@@ -1,0 +1,62 @@
+from tkinter import Tk, Menu, END, filedialog,messagebox,simpledialog
+import tkinter.scrolledtext as st
+
+# main window
+root= Tk(className=" Text Editor")
+textArea= st.ScrolledText(root, width=80, height=50)
+textArea.pack()
+#filename= None
+
+def newFile():
+    if len(textArea.get("1.0", END+ '-1c'))>0:
+        if messagebox.askyesno("save?", 'jaruri h to kr le'):
+            saveasFile()
+        else:
+            textArea.delete('1.0', END)
+    root.title("Text Editor")
+        
+def openFile():
+    file = filedialog.askopenfile(parent=root, title='Select Kr be File', filetypes=(('HTML files', '.html'), ('Text file', '.txt'), ('All Files', '.')))
+    if file!=None:
+        contents= file.read()
+        textArea.insert('1.0', contents)
+        file.close()
+
+def saveasFile():
+    file= filedialog.asksaveasfile(mode='w', defaultextension='*.txt', filetypes=(('HTML files', '.html'), ('Text file', '.txt'), ('All Files', '.'))
+    )
+    if file!= None:
+        data = textArea.get("1.0", END+ '-1c')
+        file.write(data.rstrip())
+        file.close()
+
+def findInfo():
+    find_str= simpledialog.askstring("Find..", "Enter Text")
+    text_d= textArea.get('1.0', END)
+    occur= text_d.upper().count(find_str.upper())
+    if occur>0:
+        label= messagebox.showinfo('Results ', find_str+ " has multiple occurances  " +str(occur))
+    else:
+        label= messagebox.showinfo('Results', 'oops! not  found')
+    
+
+def exitRoot():
+    if messagebox.askyesno(" quit?", " are you sur you want to quit?"):
+        root.destroy()
+    
+#menu options
+menubar = Menu(root)
+filemenu = Menu(menubar)
+filemenu.add_command(label="New", command= newFile)
+filemenu.add_command(label="Open", command= openFile)
+filemenu.add_command(label="Save As", command= saveasFile)
+filemenu.add_command(label="Find", command= findInfo)
+filemenu.add_separator()
+filemenu.add_command(label="Quit", command=exitRoot)
+menubar.add_cascade(label="File", menu=filemenu)
+menubar.add_cascade(label="Help")
+ 
+root.config(menu=menubar)
+
+root.mainloop()
+
